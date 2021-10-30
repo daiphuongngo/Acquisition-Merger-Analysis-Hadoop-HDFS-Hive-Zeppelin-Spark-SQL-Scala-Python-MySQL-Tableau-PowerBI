@@ -2,6 +2,7 @@
 
 ## Overview:
 
+Investigating and identifying various organizations for the most profitable merger and acquisition by examining accumulated data sets.
 
 ## Platforms, Languages and Tools:
 
