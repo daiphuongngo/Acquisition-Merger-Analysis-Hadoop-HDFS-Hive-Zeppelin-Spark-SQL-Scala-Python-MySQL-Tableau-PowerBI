@@ -38,4 +38,27 @@ Sales.csv
 
 ## Visualization
 
+### Total Sales by Product Line
+
+![Total Sales by Product Line](https://user-images.githubusercontent.com/70437668/139526107-6ee7c0f3-44e9-4165-95c0-6c6813a0b0c4.jpg)
+
+### Total Sales by Firm Name colored by Product Line
+
+![Total Sales by Firm Name colored by Product Line](https://user-images.githubusercontent.com/70437668/139526104-89c67f37-d8ff-4d2b-9d65-fa53e9f6c154.jpg)
+
+### Total Sales by Firm Name and Product Line
+
+![Total Sales by Firm Name and Product Line](https://user-images.githubusercontent.com/70437668/139526100-b9141193-da74-43d8-bdea-d8e2984db625.jpg)
+
+### Total Revenue by Firm Name
+
+![Total Revenue by Firm Name](https://user-images.githubusercontent.com/70437668/139526095-8d6f0f1d-5138-41b1-81f2-de4b19094cd1.jpg)
+
+### Revenue Distribution by Product Line
+
+![Revenue Distribution by Product Line](https://user-images.githubusercontent.com/70437668/139526093-714841ef-c2f8-4b46-b599-9c079901796c.jpg)
+
+### Dashboard - Sales, Revenue by Firm, Product Line
+
+![Dashboard - Sales, Revenue by Firm, Product Line](https://user-images.githubusercontent.com/70437668/139526090-327daecd-fd93-4ad3-a2e7-e79ff10487a2.jpg)
 
