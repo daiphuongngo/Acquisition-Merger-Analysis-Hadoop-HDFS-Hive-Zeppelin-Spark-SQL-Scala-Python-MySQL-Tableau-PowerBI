@@ -1,4 +1,4 @@
-# Acquisition-Merger-Analysis-Hadoop-HDFS-Hive-Zeppelin-Spark-SQL-Scala-Tableau
+# Acquisition-Merger-Analysis-Hadoop-HDFS-Hive-Zeppelin-Spark-SQL-Scala-Python-SQLAlchemy-Tableau
 
 ## Overview:
 
@@ -261,6 +261,377 @@ CREATE TABLE `sales` (
 
 ![Sales ss 1](https://user-images.githubusercontent.com/70437668/139750265-686c8332-2239-4a6f-8f55-ece70b4b4c85.jpg)
 
+#### 2. Insert dataset into MySQL Databse on TablePlus with SQLAlchemy in Python
+
+#### 2.1 Start a Virtual Environment on Jupyter Lab
+```
+cd C:\Programming\CustomerIntention\venv\Scripts
+C:\Programming\CustomerIntention\venv\Scripts>activate
+cd ..
+cd ..
+(venv) C:\Programming\CustomerIntention>cd src\notebook
+(venv) C:\Programming\CustomerIntention>cd src\notebook\jupyter lab
+```
+
+![Command Prompt SS](https://user-images.githubusercontent.com/70437668/139750836-fb142957-e22e-4cf9-81b5-0527f529077d.jpg)
+
+
+#### 2.2 SQLAlchemy in Python on Jupyter Lab
+
+##### 2.2.1 Load data
+
+##### 2.2.2 Create an engine to access the localhost created in the Command Prompt run as administrator
+
+```
+from sqlalchemy import create_engine
+engine = create_engine('mysql+mysqldb://phuongdaingo:0505@localhost:3306/customerintention?charset=utf8mb4', echo=True) 
+```
+
+##### 2.2.3 Design 3 tables
+
+```
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, func, Boolean, MetaData, Table, Float
+from sqlalchemy.dialects.mysql import TINYINT
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base() 
+metadata = MetaData(bind=engine) 
+
+class Firm(Base):
+    __tablename__ = Table('firm', Base.metadata,
+                    autoload=True, autoload_with=engine) # metadata comes from database
+    # Database (TablePlus) will regularize PK, Python won't do so (primary_key=True) since this is for mapping tables only. 
+    # If Python is used for creating tables, we will need ID as a PK so 'primary_key=True' will be included.
+    Firm_ID = Column(Integer, primary_key=True) 
+    Firm_Name = Column(String())
+    
+class Staff(Base):
+    __tablename__ = Table('staff', Base.metadata,
+                    autoload=True, autoload_with=engine) 
+    ID = Column(Integer, primary_key=True)
+    Emp_ID = Column(Integer)
+    Name_Prefix = Column(String())
+    First_Name = Column(String())
+    Middle_Initial = Column(String())
+    Last_Name = Column(String())
+    Gender = Column(String())
+    E_Mail = Column(String())
+    Father_Name = Column(String())
+    Mother_Name = Column(String())
+    Mother_Maiden_Name = Column(String())
+    Date_of_Birth = Column(String())
+    Time_of_Birth = Column(String)
+    Age_in_Years = Column(Float())
+    Weight_in_Kgs = Column(Integer())
+    Date_of_Joining = Column(String)
+    Quarter_of_Joining = Column(String())
+    Half_of_Joining = Column(String())
+    Year_of_Joining = Column(Integer())
+    Month_of_Joining = Column(Integer())
+    Month_Name_of_Joining = Column(String())
+    Short_Month	= Column(String())
+    DOW_of_Joining = Column(String())
+    Short_DOW = Column(String())
+    Day_of_Joining = Column(Integer())
+    Age_in_Company_Years = Column(Float())
+    Salary = Column(Float())
+    SSN = Column(String())
+    Phone_No = Column(String())
+    Place_Name = Column(String())
+    County = Column(String())
+    City = Column(String())
+    State = Column(String())
+    Zip = Column(Integer)	
+    Region = Column(String())
+    User_Name = Column(String())
+    Password = Column(String())
+    Firm_ID = Column(Integer)	
+    
+class Sales(Base):
+    __tablename__ = Table('sales', Base.metadata,
+                    autoload=True, autoload_with=engine)
+    ID = Column(Integer, primary_key=True)
+    Order_Number = Column(Integer)
+    Quantity_Ordered = Column(Integer)
+    Price_of_Each = Column(Float)
+    Order_Line_Number = Column(Integer)	
+    Sales = Column(Float)
+    Revenue	= Column(Float)
+    Order_Date = Column(String)
+    Status = Column(String)
+    Quarter_ID = Column(Integer)		
+    Month_ID = Column(Integer)	
+    Year_ID	= Column(Integer)	
+    Product_Line = Column(String)	
+    MSRP = Column(Integer)
+    Product_Code = Column(String)	
+    Customer_Name = Column(String)
+    Phone = Column(String)	
+    Address_Line_1 = Column(String)
+    Address_Line_2 = Column(String)
+    City = Column(String)
+    State = Column(String)
+    Postal_Code	= Column(Integer)
+    Country	= Column(String)
+    Territory = Column(String)	
+    Contact_Last_Name = Column(String)
+    Contact_First_Name = Column(String)
+    Deal_Size = Column(String)
+    Firm_ID = Column(Integer)
+    
+# Mapping classes with tables in TablePlus's databases
+# Should not create tables by Python but TablePlus
+from sqlalchemy.orm import sessionmaker
+#Session = sessionmaker()
+#Session.configure(bind=engine)
+Session = sessionmaker(bind=engine) # writing queries requires session before executing queries
+session = Session() # object
+#Base.metadata.create_all(engine)
+```
+
+##### 2.2.4 Insert all rows of each dataframe to database's tables in TablePlus's MySQL Database
+
+New Method: inserting directly from data frames
+
+Inserting takes long time means that selecting or filtering will take less time, and in reverse, due to adding IDX for a column or different columns depending on purposes of saving data into relational database only or reading the data.
+
+I will insert dataframes in batches into session (relational database), then commit to finalize saving. If an error happen, that batch will be stopped inserting and still stay in the session and other batches will not be entered into the session as well if flush() is placed outside 'for loop'. Therefore, if flush() is placed inside the for loop, batches will be flushed into the session regarless any error might occur. But we have to set rollback() in the except case to delete any existing batches in the session causing an error.
+
+###### 2.2.4.1 Insert 'df_Firm' dataframe into 'firm' table in the MySQL databse
+```
+import time
+#import mysql.connector # as below mysql, not sqlite3 for this case
+import traceback
+from tqdm import tqdm
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String,  create_engine # use sqlalchemy with connection string for mysql
+from sqlalchemy.orm import scoped_session, sessionmaker
+import unicodedata 
+
+Base = declarative_base()
+DBSession = scoped_session(sessionmaker()) # the scoped_session() function is provided which produces a thread-managed registry of Session objects. It is commonly used in web applications so that a single global variable can be used to safely represent transactional sessions with sets of objects, localized to a single thread.
+engine = None
+
+def init_sqlalchemy(dbname='mysql+mysqldb://phuongdaingo:0505@localhost:3306/customerintention?charset=utf8mb4'):
+    global engine
+    engine = create_engine(dbname, echo=False)
+    DBSession.remove()
+    DBSession.configure(bind=engine, autoflush=False, expire_on_commit=False)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+
+def firm_sqlalchemy_orm(n=1001): 
+    init_sqlalchemy()
+    t0 = time.time() 
+    error_i_list = [] # a new list containing i(s) of batch(es) causing errors
+    
+    for i in tqdm(range(n)): # use tqdm to track progress 
+        try: # create custome, then add into session
+            firm = Firm()
+            firm.Firm_ID = df_Firm['Firm_ID'].iloc[i]
+            firm.Firm_Name = df_Firm['Firm_Name'].iloc[i]
+            DBSession.add(firm) # error might happen here or below
+            DBSession.commit()
+            
+            if i % 100 == 0: # when i reachs 100 rows, it will execute by flush() to insert the batch of 100 rows into the session of the relational database
+            #DBSession.flush() # should use try, except inside each 'for loop' to wrap i # error might happen here
+                DBSession.commit() #2nd attempt: place commit() here, then compare the progress # commit here to insert batch without affecting other batch(es) with errors
+                #text = unicodedata.normalize('NFC', text) # text: string type to fix error and replace all string texts into being wrapped by unicode 
+                
+        except Exception as er:
+            print('Error at index {}: '.format(i))
+            print(traceback.format_exc()) # print error(s)
+            print('-' * 20)
+            DBSession.rollback() # rollback here to delete all rows of a batch/batches causing errors to avoid being flooded or stuck with new batches coming in and then getting stuck as well
+            error_i_list.append(i) # append into array the index of batch(es) causing errors 
+   # DBSession.commit()  # 1st attempt: place commit() here, outside of 'for loop' # faster but will stop other batches coming in if errors happen
+    
+    print(
+        "Firm's SQLAlchemy ORM: Total time for " + str(n) +
+        " records " + str(time.time() - t0) + " secs")
+
+if __name__ == '__main__':
+    firm_sqlalchemy_orm(df_Firm.shape[0])
+```
+
+###### 2.2.4.2 Insert 'df_Sales' dataframe into 'sales' table in the MySQL database
+
+NaN values appeared in the column State because many countries don't have states like the US so I had replaced them to 'None'.
+
+nan values appeared in the column Territory because of 'NA' standing for 'North America' so I had replaced it with 'N.A'.
+
+Both the Sales and Staff tables didn't have their own ID columns so I had to created one for each as the Primary Key. However, there were some rows in Sales were collapsed. Then I went to Data > Ungroup > Clear Outline to expand all collapsed rows. After that, I fill auto-increment values for ID column by rename the ID column by ROW() for cell A1. Cell A2 will be =ROW(A1) and I copied A2's formula for the rest of cells to get all ID rows filled with unique numbers.
+
+I had set up the DateTime typed columns in both files by timestamp in the MySQL Database. However, there was a problem with doing so although this method is correct with other datasets with the same value. Then I had to change all timestamp type in MySQL into varchar and DateTime(timezone=True)) in SQLAlchemy into String().
+
+```
+import time
+#import mysql.connector # as below mysql, not sqlite3 for this case
+import traceback
+from tqdm import tqdm
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String,  create_engine # use sqlalchemy with connection string for mysql
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+Base = declarative_base()
+DBSession = scoped_session(sessionmaker()) # the scoped_session() function is provided which produces a thread-managed registry of Session objects. It is commonly used in web applications so that a single global variable can be used to safely represent transactional sessions with sets of objects, localized to a single thread.
+engine = None
+
+def init_sqlalchemy(dbname='mysql+mysqldb://phuongdaingo:0505@localhost:3306/customerintention?charset=utf8mb4'):
+    global engine
+    engine = create_engine(dbname, echo=False)
+    DBSession.remove()
+    DBSession.configure(bind=engine, autoflush=False, expire_on_commit=False)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+
+def sales_sqlalchemy_orm(n=100000): 
+    init_sqlalchemy()
+    t0 = time.time() 
+    error_i_list = [] # a new list containing i(s) of batch(es) causing errors
+    # Index column must match with ID column of df_Firm  > indexing to the row 10th iso using loop with iterows (time consuming), but by using range(df.rows) > take out the 10th row
+    for i in tqdm(range(n)): # use tqdm to track progress 
+        try: # create custome, then add into session
+            sales = Sales()
+            sales.ID = df_Sales['ID'].iloc[i]
+            sales.Order_Number = df_Sales['Order_Number'].iloc[i]
+            sales.Quantity_Ordered = df_Sales['Quantity_Ordered'].iloc[i]
+            sales.Price_of_Each = df_Sales['Price_of_Each'].iloc[i]
+            sales.Order_Line_Number = df_Sales['Order_Line_Number'].iloc[i]
+            sales.Sales = df_Sales['Sales'].iloc[i]
+            sales.Revenue = df_Sales['Revenue'].iloc[i]
+            sales.Order_Date = df_Sales['Order_Date'].iloc[i]
+            sales.Status = df_Sales['Status'].iloc[i]
+            sales.Quarter_ID = df_Sales['Quarter_ID'].iloc[i]	
+            sales.Month_ID = df_Sales['Month_ID'].iloc[i]
+            sales.Year_ID = df_Sales['Year_ID'].iloc[i]
+            sales.Product_Line = df_Sales['Product_Line'].iloc[i]
+            sales.MSRP = df_Sales['MSRP'].iloc[i]
+            sales.Product_Code = df_Sales['Product_Code'].iloc[i]
+            sales.Customer_Name = df_Sales['Customer_Name'].iloc[i]
+            sales.Phone = df_Sales['Phone'].iloc[i]
+            sales.Address_Line_1 = df_Sales['Address_Line_1'].iloc[i]
+            sales.Address_Line_2 = df_Sales['Address_Line_2'].iloc[i]
+            sales.City = df_Sales['City'].iloc[i]
+            sales.State = df_Sales['State'].iloc[i]
+            sales.Postal_Code = df_Sales['Postal_Code'].iloc[i]
+            sales.Country = df_Sales['Country'].iloc[i]
+            sales.Territory = df_Sales['Territory'].iloc[i]	
+            sales.Contact_Last_Name = df_Sales['Contact_Last_Name'].iloc[i]
+            sales.Contact_First_Name = df_Sales['Contact_First_Name'].iloc[i]
+            sales.Deal_Size = df_Sales['Deal_Size'].iloc[i]
+            sales.Firm_ID = df_Sales['Firm_ID'].iloc[i]
+            
+            DBSession.add(sales) # error might happen here or below
+            if i % 100 == 0: # when i reachs 100 rows, it will execute by flush() to insert the batch of 100 rows into the session of the relational database
+                DBSession.flush() # should use try, except inside each 'for loop' to wrap i # error might happen here
+                DBSession.commit() #2nd attempt: place commit() here, then compare the progress # commit here to insert batch without affecting other batch(es) with errors
+        except Exception as er:
+            print('Error at index {}: '.format(i))
+            print(traceback.format_exc()) # print error(s)
+            print('-' * 20)
+            DBSession.rollback() # rollback here to delete all rows of a batch/batches causing errors to avoid being flooded or stuck with new batches coming in and then getting stuck as well
+            error_i_list.append(i) # append into array the index of batch(es) causing errors 
+   # DBSession.commit()  # 1st attempt: place commit() here, outside of 'for loop' # faster but will stop other batches coming in if errors happen
+    
+    print(
+        "Sales's SQLAlchemy ORM: Total time for " + str(n) +
+        " records " + str(time.time() - t0) + " secs")
+
+if __name__ == '__main__':
+    sales_sqlalchemy_orm(df_Sales.shape[0]) 
+```
+
+###### 2.2.4.3 Insert 'df_Staff' dataframe into 'staff' table in the MySQL database
+
+```
+import time
+#import mysql.connector # as below mysql, not sqlite3 for this case
+import traceback
+from tqdm import tqdm
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String,  create_engine # use sqlalchemy with connection string for mysql
+from sqlalchemy.orm import scoped_session, sessionmaker
+import unicodedata 
+
+Base = declarative_base()
+DBSession = scoped_session(sessionmaker()) # the scoped_session() function is provided which produces a thread-managed registry of Session objects. It is commonly used in web applications so that a single global variable can be used to safely represent transactional sessions with sets of objects, localized to a single thread.
+engine = None
+
+def init_sqlalchemy(dbname='mysql+mysqldb://phuongdaingo:0505@localhost:3306/customerintention?charset=utf8mb4'):
+    global engine
+    engine = create_engine(dbname, echo=False)
+    DBSession.remove()
+    DBSession.configure(bind=engine, autoflush=False, expire_on_commit=False)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+    
+def staff_sqlalchemy_orm(n=100000): 
+    init_sqlalchemy()
+    t0 = time.time() 
+    error_i_list = [] # a new list containing i(s) of batch(es) causing errors
+    # Index column must match with ID column of df_Firm > indexing to the row 10th iso using loop with iterows (time consuming), but by using range(df.rows) > take out the 10th row
+    for i in tqdm(range(n)): # use tqdm to track progress 
+        try: 
+            staff = Staff()
+            staff.ID = df_Staff['ID'].iloc[i]
+            staff.Emp_ID = df_Staff['Emp_ID'].iloc[i]
+            staff.Name_Prefix = df_Staff['Name_Prefix'].iloc[i]
+            staff.First_Name = df_Staff['First_Name'].iloc[i]
+            staff.Middle_Initial = df_Staff['Middle_Initial'].iloc[i]
+            staff.Last_Name = df_Staff['Last_Name'].iloc[i]
+            staff.Gender = df_Staff['Gender'].iloc[i]
+            staff.E_Mail = df_Staff['E_Mail'].iloc[i]
+            staff.Father_Name = df_Staff['Father_Name'].iloc[i]
+            staff.Mother_Name = df_Staff['Mother_Name'].iloc[i]
+            staff.Mother_Maiden_Name = df_Staff['Mother_Maiden_Name'].iloc[i]
+            staff.Date_of_Birth = df_Staff['Date_of_Birth'].iloc[i]
+            staff.Time_of_Birth = df_Staff['Time_of_Birth'].iloc[i]
+            staff.Age_in_Years = df_Staff['Age_in_Years'].iloc[i]
+            staff.Weight_in_Kgs = df_Staff['Weight_in_Kgs'].iloc[i]
+            staff.Date_of_Joining = df_Staff['Date_of_Joining'].iloc[i]
+            staff.Quarter_of_Joining = df_Staff['Quarter_of_Joining'].iloc[i]
+            staff.Half_of_Joining = df_Staff['Half_of_Joining'].iloc[i]
+            staff.Year_of_Joining = df_Staff['Year_of_Joining'].iloc[i]
+            staff.Month_of_Joining = df_Staff['Month_of_Joining'].iloc[i]
+            staff.Month_Name_of_Joining = df_Staff['Month_Name_of_Joining'].iloc[i]
+            staff.Short_Month = df_Staff['Short_Month'].iloc[i]
+            staff.DOW_of_Joining = df_Staff['DOW_of_Joining'].iloc[i]
+            staff.Short_DOW = df_Staff['Short_DOW'].iloc[i]
+            staff.Day_of_Joining = df_Staff['Day_of_Joining'].iloc[i]
+            staff.Age_in_Company_Years = df_Staff['Age_in_Company_Years'].iloc[i]
+            staff.Salary = df_Staff['Salary'].iloc[i]
+            staff.SSN = df_Staff['SSN'].iloc[i]
+            staff.Phone_No = df_Staff['Phone_No'].iloc[i]
+            staff.Place_Name = df_Staff['Place_Name'].iloc[i]
+            staff.County = df_Staff['County'].iloc[i]
+            staff.City = df_Staff['City'].iloc[i]
+            staff.State = df_Staff['State'].iloc[i]
+            staff.Zip = df_Staff['Zip'].iloc[i]
+            staff.Region = df_Staff['Region'].iloc[i]
+            staff.User_Name = df_Staff['User_Name'].iloc[i]
+            staff.Password = df_Staff['Password'].iloc[i]
+            staff.Firm_ID = df_Staff['Firm_ID'].iloc[i]
+            
+            DBSession.add(staff) # error might happen here or below
+            if i % 100 == 0: # when i reachs 1000 rows, it will execute by flush() to insert the batch of 1000 rows into the session of the relational database
+                DBSession.flush() # should use try, except inside each 'for loop' to wrap i # error might happen here
+                DBSession.commit() #2nd attempt: place commit() here, then compare the progress # commit here to insert batch without affecting other batch(es) with errors
+        except Exception as er:
+            print('Error at index {}: '.format(i))
+            print(traceback.format_exc()) # print error(s)
+            print('-' * 20)
+            DBSession.rollback() # rollback here to delete all rows of a batch/batches causing errors to avoid being flooded or stuck with new batches coming in and then getting stuck as well
+            error_i_list.append(i) # append into array the index of batch(es) causing errors 
+   # DBSession.commit()  # 1st attempt: place commit() here, outside of 'for loop' # faster but will stop other batches coming in if errors happen
+    
+    print(
+        "Staff's SQLAlchemy ORM: Total time for " + str(n) +
+        " records " + str(time.time() - t0) + " secs")
+
+if __name__ == '__main__':
+    staff_sqlalchemy_orm(df_Staff.shape[0]) # number of rows of df as I want --> customized function name
+```
 
 ## Visualization
 
