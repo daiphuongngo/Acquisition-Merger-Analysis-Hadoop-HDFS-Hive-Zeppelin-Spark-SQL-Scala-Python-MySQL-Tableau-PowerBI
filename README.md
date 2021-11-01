@@ -59,7 +59,19 @@ Sales.csv
 
 ![Revenue Distribution by Product Line](https://user-images.githubusercontent.com/70437668/139526093-714841ef-c2f8-4b46-b599-9c079901796c.jpg)
 
+### Radar Chart Sum Sales by Product Line & Firm Name
+
+![Radar Chart Sum Sales by Product Line   Firm Name](https://user-images.githubusercontent.com/70437668/139621278-a30cfe87-8b26-40a2-b738-1a8bfa89004a.jpg)
+
 ### Dashboard - Sales, Revenue by Firm, Product Line
 
 ![Dashboard - Sales, Revenue by Firm, Product Line](https://user-images.githubusercontent.com/70437668/139526090-327daecd-fd93-4ad3-a2e7-e79ff10487a2.jpg)
+
+### Dashboard - Sum Sales by Firm, Product Line
+
+![Dashboard - Sum Sales by Firm, Product Line](https://user-images.githubusercontent.com/70437668/139621296-820ee1d0-0314-48a9-87ec-d87ff038d324.jpg)
+
+### Dashboard - Distribution by Sales & Revenue
+
+![Dashboard - Distribution by Sales   Revenue](https://user-images.githubusercontent.com/70437668/139621303-d7bd0065-1456-448b-83bd-0bf9bfe7aeeb.jpg)
 
