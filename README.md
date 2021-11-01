@@ -39,7 +39,9 @@ Sales.csv
 
 #### 1. Load data into HDFS
 
-- Upload 3 CSV files to a folder named 'tmp'
+- Upload the Firm CSV file to a folder named 'tmp' and the Sales & Staff Csv files to a sub-folder in it
+
+![File storage 1](https://user-images.githubusercontent.com/70437668/139749698-7351df77-5f7b-4661-829a-1cd90cf5959d.png)
 
 #### 2. Create an external tables in Hive for 'Firm' CSV file:
 ```
@@ -50,6 +52,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS Company (
 		FIELDS TERMINATED BY ','
 		STORED AS TEXTFILE
 ```
+
+![Hive table 2](https://user-images.githubusercontent.com/70437668/139749686-5e87c061-a40a-4900-9261-4a7b159116f2.png)
 
 #### 3. Load data of 2 CSV files into Zeppelin:
 
