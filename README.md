@@ -141,7 +141,7 @@ ORDER BY Percent DESC
 
 ```
 
-#### 5.5 
+#### 5.5 Show the lowest Percentage of Salary to Revenue, Salary of all employees of Firm in Descending order. The name of the Firm is in the output of the previous query. This Firm is the one earning the most among all Firms.
 ```
 %spark2.sql
 SELECT EV.Salary, EV.First_Name, EV.Last_Name, F.Firm_name  
