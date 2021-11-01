@@ -20,18 +20,18 @@ and
 
 Firm.csv
 
-| Firm ID | Firm Name |
+| Firm_ID | Firm_Name |
 |-|-|
 
 Staff.csv
 
-| Emp ID	| Name | Prefix | First Name | Middle Initial | Last Name | Gender | E Mail | Father's Name | Mother's Name | Mother's Maiden | Name | Date of Birth | Time of Birth | Age in Yrs. | Weight in Kgs. | Date of Joining | Quarter of Joining | Half of Joining | Year of Joining | Month of Joining | Month Name of Joining | Short Month | Day of Joining | DOW of Joining | Short DOW | Age in Company (Years) | Salary | Last % Hike | SSN | Phone No. | Place Name | County | City | State | Zip | Region | User Name | Password | Firm ID | 
-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-| 
+| Emp_ID | Name | Prefix | First_Name | Middle_Initial | Last_Name | Gender | E_Mail | Father_Name | Mother_Name | Mother_Maiden_Name | Date_of_Birth | Time_of_Birth | Age_in_Yrs | Weight_in_Kgs | Date_of_Joining | Quarter_of_Joining | Half_of_Joining | Year_of_Joining | Month_of_Joining | Month_Name_of_Joining | Short_Month | Day_of_Joining | DOW_of_Joining | Short_DOW | Age_in_Company_Years | Salary | SSN | Phone_No | Place_Name | County | City | State | Zip | Region | User_Name | Password | Firm_ID | 
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 
 Sales.csv
 
-| Order Number | Quantity Ordered | Price of Each	Order | Line Number	Sales | Revenue | Order Date | Status | Quarter ID | Month ID | Year ID | Product Line | MSRP | Product Code | Customer Name | Phone | Address Line 1 | Address Line 2 | City | State | Postal Code | Country | Territory | Contact Last Name | Contact First Name | Deal Size | Firm ID | 
-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+| Order_Number | Quantity_Ordered | Price_of_Each_Order | Line_Number | Sales | Revenue | Order_Date | Status | Quarter_ID | Month_ID | Year_ID | Product_Line | MSRP | Product_Code | Customer_Name | Phone | Address_Line 1 | Address_Line 2 | City | State | Postal_Code | Country | Territory | Contact_Last_Name | Contact_First_Name | Deal_Size | Firm_ID | 
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 
 ## Input data:
 
@@ -102,41 +102,41 @@ FROM SalesView
 
 ##### 5.1. Revenue by Product Line:
 ```
-SELECT ProductLine, Sum(Revenue) as Cumulated_Revenue 
+SELECT Product_Line, Sum(Revenue) as Cumulated_Revenue 
 FROM SalesView
-GROUP BY ProductLine
+GROUP BY Product_Line
 ```
 
 ##### 5.2. Sum Sales by Product Line & Firm Name
 ```
 %spark2.sql
-SELECT SUM(SalesView.Sales), SalesView.ProductLine, Firm.Name
+SELECT SUM(SalesView.Sales), SalesView.Product_Line, Firm.Firm_Name
 FROM SalesView
 JOIN Firm 
-ON Firm.ID = SalesView.FirmID
-WHERE Firm.FirmID < 11
-GROUP BY SalesView.ProductLine
+ON Firm.Firm_ID = SalesView.Firm_ID
+WHERE Firm.Firm_ID < 11
+GROUP BY SalesView.Product_Line
 ```
 
 #### 5.3 Sum Revenue by Firm Name categorized by Car
 ```
 %spark2.sql
-SELECT SUM(SalesView.Revenue), Firm.Name 
+SELECT SUM(SalesView.Revenue), Firm.Firm_Name 
 FROM SalesView, Firm 
-WHERE SalesView.FirmID = Firm.FirmID 
-AND SalesView.ProductLine LIKE "%Cars%" 
-GROUP BY Firm.Name  
+WHERE SalesView.Firm_ID = Firm.Firm_ID 
+AND SalesView.Product_Line LIKE "%Cars%" 
+GROUP BY Firm.Firm_Name  
 ORDER BY SUM(SalesView.Sales) DESC
 ```
 
 #### 5.4 Percentage of Salary to Revenue for each Firm by name
 ```
 %spark2.sql
-SELECT  SUM(SV.Revenue), SUM(EV.salary), SUM(EV.salary) / SUM(SV.Revenue)  * 100 AS Percent, F.Name 
+SELECT  SUM(SV.Revenue), SUM(EV.Salary), SUM(EV.Salary) / SUM(SV.Revenue)  * 100 AS Percent, F.Firm_Name 
 FROM Salesview SV, Firm F, EmpView EV
-WHERE SV.FirmID = EC.FirmID 
-AND F.FirmID = EV.FirmID  
-GROUP BY F.Name
+WHERE SV.Firm_ID = EC.Firm_ID 
+AND F.Firm_ID = EV.Firm_ID  
+GROUP BY F.Firm_Name
 ORDER BY Percent DESC
 
 ```
@@ -144,10 +144,10 @@ ORDER BY Percent DESC
 #### 5.5 
 ```
 %spark2.sql
-SELECT EV.Salary, EV.`First Name`, EV.`Last Name`, F.name  
+SELECT EV.Salary, EV.First_Name, EV.Last_Name, F.Firm_name  
 FROM Firm F, EmpView EV
-WHERE F.CompanyID = EV.CompanyID 
-AND F.Name = "British Leyland"  
+WHERE F.Firm_ID = EV.Firm_ID 
+AND F.Firm_Name = "British Leyland"  
 ORDER BY EV.Salary DESC
 
 ```
