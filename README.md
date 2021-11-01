@@ -169,6 +169,10 @@ CREATE TABLE `firm` (
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci
 ```
 
+![Firm ss 1](https://user-images.githubusercontent.com/70437668/139750232-18705797-d3f5-4ef7-a694-a3e6fe93428a.jpg)
+
+![Firm ss 2](https://user-images.githubusercontent.com/70437668/139750239-bbca03ec-c3e4-4c87-b7be-0151eae0253f.jpg)
+
 ##### 1.2 Staff:
 ```
 CREATE TABLE `staff` (
@@ -214,6 +218,10 @@ CREATE TABLE `staff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci
 ```
 
+![Staff ss 2](https://user-images.githubusercontent.com/70437668/139750279-0501b6ee-88a8-4958-a46f-fad97c1f40b0.jpg)
+
+![Staff ss 1](https://user-images.githubusercontent.com/70437668/139750285-d7d2d024-db5a-41bd-98b6-875a69fa13bb.jpg)
+
 ##### 1.3 Sales:
 ```
 CREATE TABLE `sales` (
@@ -248,6 +256,10 @@ CREATE TABLE `sales` (
   UNIQUE KEY `ID` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
 ```
+
+![Sales ss 2](https://user-images.githubusercontent.com/70437668/139750255-c716579d-122a-4e29-a596-04a226e27664.jpg)
+
+![Sales ss 1](https://user-images.githubusercontent.com/70437668/139750265-686c8332-2239-4a6f-8f55-ece70b4b4c85.jpg)
 
 
 ## Visualization
