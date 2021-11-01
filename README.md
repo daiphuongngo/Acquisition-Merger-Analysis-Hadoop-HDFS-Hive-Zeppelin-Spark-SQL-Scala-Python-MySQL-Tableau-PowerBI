@@ -6,17 +6,13 @@ Investigating and identifying various organizations for the most profitable merg
 
 ## Platforms, Languages and Tools:
 
-- Hadoop
+- Big Data's Cloud Environment: Hadoop, HDFS, Zeppelin, Spark, Scala, SQL
 
-- HDFS
+or
 
-- Zeppelin
+- MySQL Database's Virtual Environment: MySQL, SQL, Python, SQL Alchemy
 
-- Spark
-
-- Scala
-
-- SQL
+and
 
 - Tableau
 
@@ -36,6 +32,125 @@ Sales.csv
 
 | Order Number | Quantity Ordered | Price of Each	Order | Line Number	Sales | Revenue | Order Date | Status | Quarter ID | Month ID | Year ID | Product Line | MSRP | Product Code | Customer Name | Phone | Address Line 1 | Address Line 2 | City | State | Postal Code | Country | Territory | Contact Last Name | Contact First Name | Deal Size | Firm ID | 
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+
+## Input data:
+
+### Big Data's Cloud Platform - Hadoop:
+
+#### 1. Load data into HDFS
+
+- Upload 3 CSV files to a folder named 'tmp'
+
+#### 2. Create an external tables in Hive for 'Firm' CSV file:
+```
+CREATE EXTERNAL TABLE IF NOT EXISTS Company (
+		CompanyID INT, Name STRING)
+		COMMENT 'Date of company names'
+		ROW FORMAT DELIMITED
+		FIELDS TERMINATED BY ','
+		STORED AS TEXTFILE
+```
+
+#### 3. Load data of 2 CSV files into Zeppelin:
+
+Create a sub-folder in the main folder 'tmp' to store the remaining 2 CSV files
+
+##### 3.a. Sales:
+
+```
+%spark2
+val Sales = (spark.read
+		.option("header", "true") // Use first line as header
+		.option("inferSchema", "true") // Infer Schema
+		.csv("/tmp/Sales and Staff/Sales.csv")
+```
+
+##### 3.b. Sales:
+```
+%spark2
+val Staff = (spark.read
+		.option("header", "true") // Use first line as header
+		.option("inferSchema", "true") // Infer Schema
+		.csv("/tmp/Sales and Staff/Staff.csv")
+```
+
+#### 4. Print Scheme:
+```
+%spark2
+sales.printSchema()
+```
+
+```
+%spark2
+employee.printSchema()
+```
+
+#### 5. Print out the data:
+```
+%spark2.sql
+SELECT *
+FROM EmpView
+```
+
+```
+ %spark2.sql
+SELECT *
+FROM SalesView
+```
+
+#### 5. Analysis on Zeppelin:
+
+##### 5.1. Revenue by Product Line:
+```
+SELECT ProductLine, Sum(Revenue) as Cumulated_Revenue 
+FROM SalesView
+GROUP BY ProductLine
+```
+
+##### 5.2. Sum Sales by Product Line & Firm Name
+```
+%spark2.sql
+SELECT SUM(SalesView.Sales), SalesView.ProductLine, Firm.Name
+FROM SalesView
+JOIN Firm 
+ON Firm.ID = SalesView.FirmID
+WHERE Firm.FirmID < 11
+GROUP BY SalesView.ProductLine
+```
+
+#### 5.3 Sum Revenue by Firm Name categorized by Car
+```
+%spark2.sql
+SELECT SUM(SalesView.Revenue), Firm.Name 
+FROM SalesView, Firm 
+WHERE SalesView.FirmID = Firm.FirmID 
+AND SalesView.ProductLine LIKE "%Cars%" 
+GROUP BY Firm.Name  
+ORDER BY SUM(SalesView.Sales) DESC
+```
+
+#### 5.4 Percentage of Salary to Revenue for each Firm by name
+```
+%spark2.sql
+SELECT  SUM(SV.Revenue), SUM(EV.salary), SUM(EV.salary) / SUM(SV.Revenue)  * 100 AS Percent, F.Name 
+FROM Salesview SV, Firm F, EmpView EV
+WHERE SV.FirmID = EC.FirmID 
+AND F.FirmID = EV.FirmID  
+GROUP BY F.Name
+ORDER BY Percent DESC
+
+```
+
+#### 5.5 
+```
+%spark2.sql
+SELECT EV.Salary, EV.`First Name`, EV.`Last Name`, F.name  
+FROM Firm F, EmpView EV
+WHERE F.CompanyID = EV.CompanyID 
+AND F.Name = "British Leyland"  
+ORDER BY EV.Salary DESC
+
+```
 
 ## Visualization
 
