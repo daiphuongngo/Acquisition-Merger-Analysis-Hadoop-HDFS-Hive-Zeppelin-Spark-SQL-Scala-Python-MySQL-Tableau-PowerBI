@@ -659,6 +659,10 @@ if __name__ == '__main__':
 
 ![Radar Chart Sum Sales by Product Line   Firm Name](https://user-images.githubusercontent.com/70437668/139621278-a30cfe87-8b26-40a2-b738-1a8bfa89004a.jpg)
 
+### Dashboard - Value by Firm, Product Line (full & filtered Radar Charts)
+
+![Dashboard - Value by Firm, Product Line (full   filtered Radar Charts)](https://user-images.githubusercontent.com/70437668/139786117-962b0c40-3c4f-430f-9f98-bc1f1265af79.jpg)
+
 ### Dashboard - Sales, Revenue by Firm, Product Line
 
 ![Dashboard - Sales, Revenue by Firm, Product Line](https://user-images.githubusercontent.com/70437668/139526090-327daecd-fd93-4ad3-a2e7-e79ff10487a2.jpg)
