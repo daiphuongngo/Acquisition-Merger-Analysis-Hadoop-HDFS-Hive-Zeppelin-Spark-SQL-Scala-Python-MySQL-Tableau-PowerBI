@@ -16,6 +16,8 @@ and
 
 - Tableau
 
+- Power BI
+
 ## Dataset:
 
 Firm.csv
@@ -32,6 +34,8 @@ Sales.csv
 
 | Order_Number | Quantity_Ordered | Price_of_Each_Order | Line_Number | Sales | Revenue | Order_Date | Status | Quarter_ID | Month_ID | Year_ID | Product_Line | MSRP | Product_Code | Customer_Name | Phone | Address_Line 1 | Address_Line 2 | City | State | Postal_Code | Country | Territory | Contact_Last_Name | Contact_First_Name | Deal_Size | Firm_ID | 
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+
+![Dataset relationship](https://user-images.githubusercontent.com/70437668/140477963-a2b8d2df-354b-4613-82a0-05cc5bf95cd6.jpg)
 
 ## Input data:
 
@@ -639,21 +643,31 @@ if __name__ == '__main__':
 
 ![Total Sales by Product Line](https://user-images.githubusercontent.com/70437668/139526107-6ee7c0f3-44e9-4165-95c0-6c6813a0b0c4.jpg)
 
+![Total Sales by Product Line](https://user-images.githubusercontent.com/70437668/140477658-45b9acf7-1a76-42e6-8769-b89911eb06d0.jpg)
+
 ### Total Sales by Firm Name colored by Product Line
 
 ![Total Sales by Firm Name colored by Product Line](https://user-images.githubusercontent.com/70437668/139526104-89c67f37-d8ff-4d2b-9d65-fa53e9f6c154.jpg)
+
+![Total Sales by Firm Name colored by Product Line](https://user-images.githubusercontent.com/70437668/140477766-38935f5c-7cf1-47ac-92be-2463a14f9004.jpg)
 
 ### Total Sales by Firm Name and Product Line
 
 ![Total Sales by Firm Name and Product Line](https://user-images.githubusercontent.com/70437668/139526100-b9141193-da74-43d8-bdea-d8e2984db625.jpg)
 
+![Total Sales by Firm Name and Product Line](https://user-images.githubusercontent.com/70437668/140477798-649530bf-efb2-448f-8870-9ef779e98211.jpg)
+
 ### Total Revenue by Firm Name
 
 ![Total Revenue by Firm Name](https://user-images.githubusercontent.com/70437668/139526095-8d6f0f1d-5138-41b1-81f2-de4b19094cd1.jpg)
 
+![Total Revenue by Firm Name](https://user-images.githubusercontent.com/70437668/140477863-8d5d7164-93d2-4e9c-987f-76a794036420.jpg)
+
 ### Revenue Distribution by Product Line
 
 ![Revenue Distribution by Product Line](https://user-images.githubusercontent.com/70437668/139526093-714841ef-c2f8-4b46-b599-9c079901796c.jpg)
+
+![Revenue Distribution by Product Line](https://user-images.githubusercontent.com/70437668/140477881-a7b27089-7bbf-4b0c-90d5-f9b76fcd58ea.jpg)
 
 ### Radar Chart Sum Sales by Product Line & Firm Name
 
