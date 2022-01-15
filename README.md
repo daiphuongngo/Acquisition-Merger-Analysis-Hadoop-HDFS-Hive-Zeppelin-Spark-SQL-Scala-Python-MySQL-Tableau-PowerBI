@@ -698,6 +698,8 @@ There is a strong correlation between Sales and Revenue distributed by Product l
 
 This Radar chart can also sketch the significant difference in sales between product lines. Classic cars show beyond doubt the highest sales of all products with Humber Tech as the champion. Other sector shows the same correlation as mentioned above that Vintage Cars rank 2nd and Motorcycles rank 3rd as the radar leans towards the left-hand side crucially.
 
+It can be drawn on Tableau manually by following this tutorial's steps. These steps are pretty long to prepare in advance. However, it makes data visualization even more advanced in terms of complexity and explainability: [Drawing Radar Charts in Tableau](https://tableau.toanhoang.com/drawing-radar-charts-in-tableau/)
+
 ![Radar Chart Sum Sales by Product Line   Firm Name](https://user-images.githubusercontent.com/70437668/139621278-a30cfe87-8b26-40a2-b738-1a8bfa89004a.jpg)
 
 ### Dashboard - Value by Firm, Product Line (full & filtered Radar Charts)
