@@ -8,11 +8,15 @@ In this project, I will showcase how to input the dataset into the Hadoop's Clou
 
 ## Platforms, Languages and Tools:
 
-- Big Data's Cloud Environment: Hadoop, HDFS, Zeppelin, Spark, Scala, SQL
+- Big Data's Environment: Hadoop, HDFS, Zeppelin, Spark, Scala, SQL
 
 or
 
 - MySQL Database's Virtual Environment: MySQL, SQL, Python, SQL Alchemy
+
+or
+
+- Cloud-based service: Azure
 
 and
 
